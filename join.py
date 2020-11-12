@@ -253,7 +253,7 @@ class ZoomBot(unittest.TestCase):
         self.do_captcha(driver)
 
         self.log("Wait for second site")
-        self.wait_between(MIN_RAND, MAX_RAND)
+        self.wait_between(LONG_MIN_RAND, LONG_MAX_RAND)
 
         self.log("Start get2")
         driver.get(url2)
