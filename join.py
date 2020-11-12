@@ -12,10 +12,9 @@ from random import uniform
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
+from lessons import *
 
 # Randomization Related
 MIN_RAND = 0.64
@@ -24,6 +23,14 @@ LONG_MIN_RAND = 4.78
 LONG_MAX_RAND = 11.1
 delayTime = 2
 audioToTextDelay = 10
+
+print(schedule())
+
+if not which_lesson(True):
+    print("there's no class right now.\n")
+    quit()
+
+sleep(3)
 
 
 class ZoomBot(unittest.TestCase):
@@ -269,4 +276,5 @@ if __name__ == "__main__":
     ZoomBot.url1 = 'https://zoom.us/signin'
     # zoom class link
     ZoomBot.url2 = 'https://edu-il.zoom.us/wc/join/2960827055'
+    # ZoomBot.url2(which_lesson(True))
     unittest.main()
