@@ -5,3 +5,4 @@ log
 *.log
 .vscode
 .DS_Store
+*.mp3

@@ -12,9 +12,10 @@ from random import uniform
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
-from lessons import *
 
 # Randomization Related
 MIN_RAND = 0.64
@@ -23,14 +24,6 @@ LONG_MIN_RAND = 4.78
 LONG_MAX_RAND = 11.1
 delayTime = 2
 audioToTextDelay = 10
-
-print(schedule())
-
-if not which_lesson(True):
-    print("there's no class right now.\n")
-    quit()
-
-sleep(3)
 
 
 class ZoomBot(unittest.TestCase):
@@ -163,23 +156,28 @@ class ZoomBot(unittest.TestCase):
         self.log("Wait")
         self.wait_between(LONG_MIN_RAND, LONG_MAX_RAND)
 
+        googleClass = driver.find_elements_by_class_name('g-recaptcha')[0]
+        outeriframe = googleClass.find_element_by_tag_name('iframe')
+        outeriframe.click()
+
+        allIframesLen = driver.find_elements_by_tag_name('iframe')
+        self.audioBtnFound = False
+        self.audioBtnIndex = -1
+
         self.log("Switch Frame")
-        for index in range(len(iframes)):
+        for index in range(len(allIframesLen)):
             driver.switch_to.default_content()
-            iframe = iframes[index]
+            iframe = driver.find_elements_by_tag_name('iframe')[index]
             driver.switch_to.frame(iframe)
             driver.implicitly_wait(delayTime)
             try:
-                audio_btn = driver.find_element_by_id('recaptcha-audio-button')
-                self.log("Mouse movements")
-                action = ActionChains(driver)
-                self.human_like_mouse_move(action, audio_btn)
-                audio_btn.click()
+                audioBtn = driver.find_element_by_id('recaptcha-audio-button')
+                audioBtn.click()
                 self.audioBtnFound = True
                 self.audioBtnIndex = index
                 break
             except Exception as e:
-                print(e)
+                pass
 
         self.log("Wait")
         self.wait_between(LONG_MIN_RAND, LONG_MAX_RAND)
@@ -192,9 +190,9 @@ class ZoomBot(unittest.TestCase):
                     response = requests.get(href, stream=True)
                     self.saveFile(response, self.filename)
                     response = self.audioToText(
-                        f"{os.getcwd()}/{self.filename}", driver)
+                        f"{os.getcwd()}/{self.filename}")
 
-                    driver.switch_to.default_content
+                    driver.switch_to_default_content()
                     iframe = driver.find_elements_by_tag_name(
                         'iframe')[self.audioBtnIndex]
                     driver.switch_to.frame(iframe)
@@ -210,9 +208,10 @@ class ZoomBot(unittest.TestCase):
                     if errorMsg.text == "" or errorMsg.value_of_css_property('display') == 'none':
                         print("\n[>] Success")
                         break
+
             except Exception as e:
                 print(e)
-
+                print('\n[>] Caught. Try to change proxy now.')
         else:
             print('\n[>] Button not found. This should not happen.')
 
@@ -253,7 +252,7 @@ class ZoomBot(unittest.TestCase):
         self.do_captcha(driver)
 
         self.log("Wait for second site")
-        self.wait_between(LONG_MIN_RAND, LONG_MAX_RAND)
+        self.wait_between(MIN_RAND, MAX_RAND)
 
         self.log("Start get2")
         driver.get(url2)
@@ -272,9 +271,6 @@ class ZoomBot(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # sign in into zoom
     ZoomBot.url1 = 'https://zoom.us/signin'
-    # zoom class link
-    ZoomBot.url2 = 'https://edu-il.zoom.us/wc/join/2960827055'
-    # ZoomBot.url2(which_lesson(True))
+    ZoomBot.url2 = 'https://edu-il.zoom.us//2960827055'
     unittest.main()
