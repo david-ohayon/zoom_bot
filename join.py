@@ -10,10 +10,7 @@ from time import sleep
 from random import uniform
 
 from selenium import webdriver
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 
@@ -69,8 +66,8 @@ class ZoomBot(unittest.TestCase):
     def log(s, t=None):
         now = datetime.now()
         if t == None:
-            t = "Main"
-        print(f"{now.strftime('%H:%M:%S')} :: {t} -> {s}")
+            t = "zoombot"
+        print(f"{now.strftime('%H:%M')} : {t} -> {s}")
 
     # Use time.sleep for waiting and uniform for randomizing
     def wait_between(self, a, b):
@@ -78,7 +75,7 @@ class ZoomBot(unittest.TestCase):
         sleep(rand)
 
     def audioToText(self, mp3Path, driver):
-        driver.execute_script('''window.open("","_blank");''')
+        driver.execute_script('window.open("","_blank");')
         driver.switch_to.window(driver.window_handles[1])
 
         driver.get('https://speech-to-text-demo.ng.bluemix.net/')
@@ -154,18 +151,10 @@ class ZoomBot(unittest.TestCase):
         driver.switch_to.frame(iframes[0])
 
         self.log("Wait")
-        self.wait_between(LONG_MIN_RAND, LONG_MAX_RAND)
-
-        googleClass = driver.find_elements_by_class_name('g-recaptcha')[0]
-        outeriframe = googleClass.find_element_by_tag_name('iframe')
-        outeriframe.click()
-
-        allIframesLen = driver.find_elements_by_tag_name('iframe')
-        self.audioBtnFound = False
-        self.audioBtnIndex = -1
+        self.wait_between(MIN_RAND, MAX_RAND)
 
         self.log("Switch Frame")
-        for index in range(len(allIframesLen)):
+        for index in range(len(iframes)):
             driver.switch_to.default_content()
             iframe = driver.find_elements_by_tag_name('iframe')[index]
             driver.switch_to.frame(iframe)
@@ -190,7 +179,7 @@ class ZoomBot(unittest.TestCase):
                     response = requests.get(href, stream=True)
                     self.saveFile(response, self.filename)
                     response = self.audioToText(
-                        f"{os.getcwd()}/{self.filename}")
+                        f"{os.getcwd()}/{self.filename}", driver)
 
                     driver.switch_to_default_content()
                     iframe = driver.find_elements_by_tag_name(
@@ -240,14 +229,14 @@ class ZoomBot(unittest.TestCase):
         password.send_keys('h+rZ5_/Nc=f9_!V')
 
         self.log("Wait for join btn")
-        self.wait_between(LONG_MIN_RAND, LONG_MAX_RAND)
+        self.wait_between(MIN_RAND, MAX_RAND)
 
         join_btn = driver.find_element(
             By.XPATH, '//*[@id="login-form"]/div[4]/div/div[1]/button')
         join_btn.click()
 
         self.log("Wait for recaptcha")
-        self.wait_between(LONG_MIN_RAND, LONG_MAX_RAND)
+        self.wait_between(MIN_RAND, MAX_RAND)
 
         self.do_captcha(driver)
 
@@ -267,10 +256,10 @@ class ZoomBot(unittest.TestCase):
         self.log("Done")
 
     def tearDown(self):
-        self.wait_between(21.13, 31.05)
+        self.wait_between(MIN_RAND, MAX_RAND)
 
 
 if __name__ == "__main__":
     ZoomBot.url1 = 'https://zoom.us/signin'
-    ZoomBot.url2 = 'https://edu-il.zoom.us//2960827055'
+    ZoomBot.url2 = 'https://edu-il.zoom.us/wc/join/2960827055'
     unittest.main()
