@@ -6,6 +6,5 @@ log
 .vscode
 .DS_Store
 mp3
+.mp3
 *.mp3
-captcha_audio.mp3
-!internal/data/*.mp3
