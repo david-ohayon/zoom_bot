@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
 
+# system modules
 import unittest
 import os
 
+# helping modules
 import numpy as np
 import scipy.interpolate as si
 import requests
 from dotenv import load_dotenv, find_dotenv
 
+# python modules
 from datetime import datetime
 from time import sleep
 from random import uniform
 
+# selenium modules
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+# lessons file
+from lessons import *
 
 # waiting variables
 MIN_RAND = 0.64
@@ -264,6 +270,13 @@ class ZoomBot(unittest.TestCase):
 
 
 if __name__ == "__main__":
+
+    print(schedule())
+
+    if not which_lesson(True):
+        print("there's no class right now.\n")
+        quit()
+
     ZoomBot.url1 = 'https://zoom.us/signin'
-    ZoomBot.url2 = 'https://edu-il.zoom.us/wc/join/2960827055'
+    ZoomBot.url2 = which_lesson(True)
     unittest.main()
