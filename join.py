@@ -273,6 +273,8 @@ if __name__ == "__main__":
 
     print(schedule())
 
+    sleep(7)
+
     if not which_lesson(True):
         print("there's no class right now.\n")
         quit()
