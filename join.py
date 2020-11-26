@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
+
 import unittest
 import os
 
 import numpy as np
 import scipy.interpolate as si
 import requests
+from dotenv import load_dotenv, find_dotenv
 
 from datetime import datetime
 from time import sleep
@@ -14,13 +17,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 
-# Randomization Related
+# waiting variables
 MIN_RAND = 0.64
 MAX_RAND = 1.27
 LONG_MIN_RAND = 4.78
 LONG_MAX_RAND = 11.1
 delayTime = 2
 audioToTextDelay = 10
+load_dotenv(find_dotenv())
 
 
 class ZoomBot(unittest.TestCase):
@@ -144,7 +148,6 @@ class ZoomBot(unittest.TestCase):
                 break
 
     def do_captcha(self, driver):
-
         driver.switch_to.default_content()
         self.log("Switch to new frame")
         iframes = driver.find_elements_by_tag_name("iframe")
@@ -153,7 +156,7 @@ class ZoomBot(unittest.TestCase):
         self.log("Wait")
         self.wait_between(MIN_RAND, MAX_RAND)
 
-        self.log("Switch Frame")
+        self.log("Switch to recaptcha Frame")
         for index in range(len(iframes)):
             driver.switch_to.default_content()
             iframe = driver.find_elements_by_tag_name('iframe')[index]
@@ -200,7 +203,6 @@ class ZoomBot(unittest.TestCase):
 
             except Exception as e:
                 print(e)
-                print('\n[>] Caught. Try to change proxy now.')
         else:
             print('\n[>] Button not found. This should not happen.')
 
@@ -223,10 +225,10 @@ class ZoomBot(unittest.TestCase):
         self.wait_between(MIN_RAND, MAX_RAND)
 
         email = driver.find_element(By.XPATH, '//*[@id="email"]')
-        email.send_keys('davideytanohayon@gmail.com')
+        email.send_keys(os.getenv("EMAIL"))
 
         password = driver.find_element(By.XPATH, '//*[@id="password"]')
-        password.send_keys('h+rZ5_/Nc=f9_!V')
+        password.send_keys(os.getenv("PASSWORD"))
 
         self.log("Wait for join btn")
         self.wait_between(MIN_RAND, MAX_RAND)
@@ -239,6 +241,8 @@ class ZoomBot(unittest.TestCase):
         self.wait_between(MIN_RAND, MAX_RAND)
 
         self.do_captcha(driver)
+
+        self.wait_between(MIN_RAND, MAX_RAND)
 
         self.log("Wait for second site")
         self.wait_between(MIN_RAND, MAX_RAND)

@@ -7,3 +7,8 @@
 - unittest library for running and error handeling
 - [Bmi speech recognition](https://speech-to-text-demo.ng.bluemix.net/)
 - and B-spline for simulate human mouse movements.
+
+### make it an executable
+
+- chmod u+x join.py
+- ./join.py
