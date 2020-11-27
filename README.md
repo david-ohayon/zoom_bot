@@ -10,7 +10,11 @@
 
 ## run it
 ```
+cd /path/to/repository/
 pip install -r requirements.txt
+```
+then
+```
 python3 join.py
 ```
 ### or make it an executable
