@@ -8,6 +8,14 @@
 - [Bmi speech recognition](https://speech-to-text-demo.ng.bluemix.net/) to bypass recaptcha
 - and of B-spline for simulate human mouse movements.
 
+## Install firefox if you haven't already to run the program
+### I used Firefox as my webdriver to create this bot that gets into my zoom class
+### It won't run if you don't have Firefox, or you can edit my code to run it via Chrome, then you need a chromedriver
+### to install it run the commmand:
+```
+brew install --cask chromedriver
+```
+
 ## run it
 ```
 cd /path/to/repository/
