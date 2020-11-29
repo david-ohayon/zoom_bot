@@ -190,7 +190,7 @@ class ZoomBot(unittest.TestCase):
                     response = self.audioToText(
                         f"{os.getcwd()}/{self.filename}", driver)
 
-                    driver.switch_to_default_content()
+                    driver.switch_to.default_content()
                     iframe = driver.find_elements_by_tag_name(
                         'iframe')[self.audioBtnIndex]
                     driver.switch_to.frame(iframe)
@@ -277,7 +277,7 @@ if __name__ == "__main__":
         print("there's no class right now.\n")
         quit()
 
-    sleep(7)
+    sleep(4)
 
     ZoomBot.url1 = 'https://zoom.us/signin'
     ZoomBot.url2 = which_lesson(True)
