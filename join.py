@@ -35,8 +35,7 @@ load_dotenv(find_dotenv())
 
 class ZoomBot(unittest.TestCase):
 
-    url1 = None
-    url2 = None
+    lesson_link = None
     headless = False
     options = None
     profile = None
@@ -53,9 +52,10 @@ class ZoomBot(unittest.TestCase):
 
     # Setup profile
     def setUpProfile(self):
-        self.profile = webdriver.FirefoxProfile()
+        self.profile = webdriver.FirefoxProfile(
+            profile_directory='/Users/davidohayon/Library/Application Support/Firefox/Profiles/xn2xbz3b.default-release')
         self.profile.set_preference(
-            "security.fileuri.strict_origin_policy", False)
+            'security.fileuri.strict_origin_policy', False)
         self.profile.update_preferences()
 
     # Enable Marionette, An automation driver for Mozilla's Gecko engine
@@ -76,8 +76,8 @@ class ZoomBot(unittest.TestCase):
     def log(s, t=None):
         now = datetime.now()
         if t == None:
-            t = "zoombot"
-        print(f"{now.strftime('%H:%M')} : {t} -> {s}")
+            t = 'zoombot'
+        print(f'{now.strftime("%H:%M")} : {t} -> {s}')
 
     # Use time.sleep for waiting and uniform for randomizing
     def wait_between(self, a, b):
@@ -92,17 +92,17 @@ class ZoomBot(unittest.TestCase):
 
         # Upload file
         sleep(1)
-        driver.execute_script("window.scrollTo(0, 1000);")
+        driver.execute_script('window.scrollTo(0, 1000);')
         btn = driver.find_element(By.XPATH, '//*[@id="root"]/div/input')
         btn.send_keys(mp3Path)
 
         # Audio to text is processing
         sleep(audioToTextDelay)
 
-        driver.execute_script("window.scrollTo(0, 1000);")
-        text = driver.find_elements(
-            By.XPATH, '//*[@id="root"]/div/div[6]/div/div/div/span')
-        result = " ".join([each.text for each in text])
+        driver.execute_script('window.scrollTo(0, 1000);')
+        elem = driver.find_elements(
+            By.XPATH, '//*[@id="root"]/div/div[7]/div/div/div/span')
+        result = ' '.join([each.text for each in elem])
 
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
@@ -110,7 +110,7 @@ class ZoomBot(unittest.TestCase):
         return result
 
     def saveFile(self, content, filename):
-        with open(filename, "wb") as handle:
+        with open(filename, 'wb') as handle:
             for data in content.iter_content():
                 handle.write(data)
 
@@ -148,25 +148,24 @@ class ZoomBot(unittest.TestCase):
         for mouse_x, mouse_y in zip(x_i, y_i):
             action.move_by_offset(mouse_x, mouse_y)
             action.perform()
-            self.log(f"Move mouse to, {mouse_x}:{mouse_y}")
+            self.log(f'Move mouse to, {mouse_x}:{mouse_y}')
             i += 1
             if i == c:
                 break
 
     def do_captcha(self, driver):
         driver.switch_to.default_content()
-        self.log("Switch to new frame")
-        iframes = driver.find_elements_by_tag_name("iframe")
+        self.log('Switch to new frame')
+        iframes = driver.find_elements_by_tag_name('iframe')
         driver.switch_to.frame(iframes[0])
 
-        self.log("Wait")
+        self.log('Wait')
         self.wait_between(MIN_RAND, MAX_RAND)
 
-        self.log("Switch to recaptcha Frame")
+        self.log('Switch to recaptcha Frame')
         for index in range(len(iframes)):
             driver.switch_to.default_content()
-            iframe = driver.find_elements_by_tag_name('iframe')[index]
-            driver.switch_to.frame(iframe)
+            driver.switch_to.frame(iframes[index])
             driver.implicitly_wait(delayTime)
             try:
                 audioBtn = driver.find_element_by_id('recaptcha-audio-button')
@@ -177,7 +176,7 @@ class ZoomBot(unittest.TestCase):
             except Exception as e:
                 pass
 
-        self.log("Wait")
+        self.log('Wait')
         self.wait_between(LONG_MIN_RAND, LONG_MAX_RAND)
 
         if self.audioBtnFound:
@@ -188,12 +187,10 @@ class ZoomBot(unittest.TestCase):
                     response = requests.get(href, stream=True)
                     self.saveFile(response, self.filename)
                     response = self.audioToText(
-                        f"{os.getcwd()}/{self.filename}", driver)
+                        f'{os.getcwd()}/{self.filename}', driver)
 
                     driver.switch_to.default_content()
-                    iframe = driver.find_elements_by_tag_name(
-                        'iframe')[self.audioBtnIndex]
-                    driver.switch_to.frame(iframe)
+                    driver.switch_to.frame(iframes[self.audioBtnIndex])
 
                     inputbtn = driver.find_element_by_id('audio-response')
                     inputbtn.send_keys(response)
@@ -203,8 +200,8 @@ class ZoomBot(unittest.TestCase):
                     errorMsg = driver.find_elements_by_class_name(
                         'rc-audiochallenge-error-message')[0]
 
-                    if errorMsg.text == "" or errorMsg.value_of_css_property('display') == 'none':
-                        print("\n[>] Success")
+                    if errorMsg.text == '' or errorMsg.value_of_css_property('display') == 'none':
+                        print('\n[>] Success')
                         break
 
             except Exception as e:
@@ -212,7 +209,7 @@ class ZoomBot(unittest.TestCase):
         else:
             print('\n[>] Button not found. This should not happen.')
 
-        self.log("Wait")
+        self.log('Wait')
         driver.implicitly_wait(5)
 
     # Main function
@@ -220,65 +217,65 @@ class ZoomBot(unittest.TestCase):
         driver = self.driver
         driver.set_window_position(0, 0)
         driver.set_window_size(1680, 720)
-        url1 = self.url1
-        url2 = self.url2
+        lesson_link = self.lesson_link
 
-        self.log("Start get1")
-        driver.get(url1)
-        self.log("End get1")
+        self.log('Start get1')
+        driver.get('https://zoom.us/signin')
+        self.log('End get1')
 
-        self.log("Wait for site to load")
+        self.log('Wait for site to load')
         self.wait_between(MIN_RAND, MAX_RAND)
 
         email = driver.find_element(By.XPATH, '//*[@id="email"]')
-        email.send_keys(os.getenv("EMAIL"))
+        email.send_keys(os.getenv('EMAIL'))
 
         password = driver.find_element(By.XPATH, '//*[@id="password"]')
-        password.send_keys(os.getenv("PASSWORD"))
+        password.send_keys(os.getenv('PASSWORD'))
 
-        self.log("Wait for join btn")
+        self.log('Wait for join btn')
         self.wait_between(MIN_RAND, MAX_RAND)
 
         join_btn = driver.find_element(
             By.XPATH, '//*[@id="login-form"]/div[4]/div/div[1]/button')
         join_btn.click()
 
-        self.log("Wait for recaptcha")
+        self.log('Wait for recaptcha')
         self.wait_between(MIN_RAND, MAX_RAND)
 
         self.do_captcha(driver)
 
         self.wait_between(MIN_RAND, MAX_RAND)
 
-        self.log("Wait for second site")
+        self.log('Wait for second site')
         self.wait_between(MIN_RAND, MAX_RAND)
 
-        self.log("Start get2")
-        driver.get(url2)
-        self.log("End get2")
+        driver.set_window_size(1680, 1050)
+        self.log('Start get2')
+        driver.get(lesson_link)
+        self.log('End get2')
 
-        self.log("Wait for second site to load")
+        self.log('Wait for second site to load')
         self.wait_between(MIN_RAND, MAX_RAND)
         join_btn = driver.find_element_by_xpath('//*[@id="joinBtn"]')
         join_btn.click()
 
         print('Joined!')
-        self.log("Done")
+        self.log('Done')
 
     def tearDown(self):
         self.wait_between(MIN_RAND, MAX_RAND)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
-    print(schedule())
+    # print(schedule())
 
-    if not which_lesson(True):
-        print("there's no class right now.\n")
-        quit()
+    # if not which_lesson(True):
+    #     print('there's no class right now.\n')
+    #     quit()
 
-    sleep(4)
+    # sleep(4)
 
-    ZoomBot.url1 = 'https://zoom.us/signin'
-    ZoomBot.url2 = which_lesson(True)
+    ZoomBot.lesson_link = 'https://zoom.us/wc/join/95007929143?pwd=MFoxK2pyWnJPa2Q0U0E3am1nMjlOQT09'
+    # which_lesson(True)
     unittest.main()
