@@ -19,6 +19,8 @@ from random import uniform
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 # lessons file
 from lessons import *
@@ -260,6 +262,34 @@ class ZoomBot(unittest.TestCase):
         join_btn.click()
 
         print('Joined!')
+
+        # WebDriverWait(driver, 300).until(
+        #     EC.presence_of_element_located(
+        #         (By.CLASS_NAME, 'ReactModal__Body--open'))
+        # )
+
+        # # driver.find_element_by_css_selector(
+        # #     '[aria-label="join audio"]').click()
+
+        # driver.find_element_by_css_selector(
+        #     '.zm-btn.join-audio-by-voip__join-btn').click()
+
+        # mute = driver.find_element_by_css_selector(
+        #     '.zm-btn.join-audio-container__btn')
+
+        # video = driver.find_element_by_css_selector(
+        #     '.zm-btn.send-video-container__btn')
+
+        # if (mute.get_attribute('aria-label') == 'mute my microphone'):
+        #     mute.click()
+        # else:
+        #     pass
+
+        # if (video.get_attribute('aria-label') == 'start sending my video'):
+        #     video.click()
+        # else:
+        #     pass
+
         self.log('Done')
 
     def tearDown(self):
@@ -268,14 +298,14 @@ class ZoomBot(unittest.TestCase):
 
 if __name__ == '__main__':
 
-    # print(schedule())
+    print(schedule())
 
-    # if not which_lesson(True):
-    #     print('there's no class right now.\n')
-    #     quit()
+    if not which_lesson(True):
+        print("there's no class right now.\n")
+        quit()
 
-    # sleep(4)
+    sleep(4)
 
-    ZoomBot.lesson_link = 'https://zoom.us/wc/join/95007929143?pwd=MFoxK2pyWnJPa2Q0U0E3am1nMjlOQT09'
-    # which_lesson(True)
+    ZoomBot.lesson_link = 'https://zoom.us/wc/join/92578692211?pwd=d3ZMK0l3SXJUVTRZQ2lHcnFTV3MyQT09'
+    which_lesson(True)
     unittest.main()
